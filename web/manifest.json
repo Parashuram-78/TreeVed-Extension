@@ -1,0 +1,21 @@
+{
+    "name": "TreeVed",
+    "short_name": "TreeVed",
+    "version": "1.0.0",
+    "description": "TreeVed is a platform for the discovery and sharing of knowledge and wisdom.",
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "permissions": [
+        "tabs",
+        "activeTab"
+    ],
+    "content_security_policy": {
+        "extention_pages": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "/icons/favicon-32x32.png"
+    },
+    "manifest_version": 3
+}

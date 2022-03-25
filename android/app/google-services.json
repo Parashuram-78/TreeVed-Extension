@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "516082304162",
+    "project_id": "treeved-9f7b6",
+    "storage_bucket": "treeved-9f7b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516082304162:android:d8bf0733bab33738be83fb",
+        "android_client_info": {
+          "package_name": "com.treeved.treeved"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516082304162-9jot6o1lukl8g64t60mqjhcsjlooengr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.treeved.treeved",
+            "certificate_hash": "46ba9af3ad3466ad306e4a0c25694df919a1d33f"
+          }
+        },
+        {
+          "client_id": "516082304162-lai6an1pv9ncqqmned0qfr3ce5t797eg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.treeved.treeved",
+            "certificate_hash": "61bfe3a256ba2c14af8fdf0955e5edd9eb0ea71d"
+          }
+        },
+        {
+          "client_id": "516082304162-ovtq45ukq0qu7bhmibl4puud9ccprmnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRN0XPMDOSy8G-Afmgkz_r9582_K2jrO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516082304162-ovtq45ukq0qu7bhmibl4puud9ccprmnc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
