@@ -27,6 +27,7 @@ class API {
   static String username = window.localStorage["username"] ?? '';
   static String refreshToken = "";
   static String accessToken = "";
+  static String tempToken = "";
 
   static Map<String, String> authHeader = {
     "Content-Type": "application/json",
@@ -102,26 +103,31 @@ class API {
         user = userCredential.user!;
         var token = await user.getIdToken();
         if (token != null) {
-          customSnackBar(context, "Logged in successfully!");
 
-          Navigator.of(context).push(
+          print("THE ID TOKEN IS $token");
+          tempToken = token;
+
+          customSnackBar(context, "Logged in successfully!");
+          /*Navigator.of(context).push(
             CupertinoPageRoute(builder: (context) => const MyHomePage()),
-          );
+          );*/
+
         }
-        return continueWithGoogleSignIn(idToken: token,context: context);
+
       }
     } catch (e) {
-      print(e);
+      print("THE ERROR IS MAIN $e");
     }
   }
 
-  static Future<AuthenticatedUser> continueWithGoogleSignIn({required String idToken, required BuildContext context}) async {
+  static Future continueWithGoogleSignIn({required String idToken, required BuildContext context}) async {
     dynamic response;
     String data = jsonEncode({"access_token": idToken});
+
     try {
-      response = await http.post(Uri.parse(url + "auth/social/signin/google-oauth2/"), body: data, headers: {"Content-Type": "application/json", "Charset": "utf-8"});
+      response = await http.post(Uri.parse(url + "/auth/social/signin/google-oauth2/"), body: data, headers: {"Content-Type": "application/json", "Charset": "utf-8"});
     } catch (e) {
-      print(e.toString());
+      print("THE ERROR IS $e");
     }
     final token = ApiTokenResponse.fromJson(response);
 
@@ -134,10 +140,10 @@ class API {
     window.localStorage["refreshToken"] = token.refreshToken!;
     window.localStorage["accessToken"] = token.accessToken!;
     if (response != null) {
-      customSnackBar(context, "Success logging in");
+      print("THE RESPONSE IS $response");
     }
 
-    return user;
+    return response;
   }
 
   static addtoList({
