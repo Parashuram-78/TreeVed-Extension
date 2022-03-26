@@ -13,7 +13,7 @@ class AllListScreen extends StatefulWidget {
   State<AllListScreen> createState() => _AllListScreenState();
 }
 
-List<Result> allList = [];
+late AllListModel list;
 String selectedList = "";
 String selectedListName = "";
 
@@ -21,9 +21,9 @@ class _AllListScreenState extends State<AllListScreen> {
   @override
   void initState() {
     Future.microtask(() async {
-      List<Result> results = await API.getUserLists();
+      var results = await API.getUserLists();
       setState(() {
-        allList = results;
+         list = results;
       });
     });
     super.initState();
@@ -55,17 +55,18 @@ class _AllListScreenState extends State<AllListScreen> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: allList.length,
+            itemCount: list.results.length,
             itemBuilder: (context, index) {
+              var rawList = list.results[index];
               return ListTile(
-                title: Text(allList[index].name),
-                subtitle: Text(allList[index].description),
+                title: Text(rawList.name),
+                subtitle: Text(rawList.description),
                 trailing: Radio(
-                  value: allList[index].id.toString(),
+                  value: rawList.id.toString(),
                   groupValue: selectedList,
                   onChanged: (value) {
                     setState(() {
-                      selectedListName = allList[index].name;
+                      selectedListName = rawList.name;
                       selectedList = value!.toString();
                     });
                   },

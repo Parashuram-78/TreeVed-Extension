@@ -70,15 +70,16 @@ class API {
   }
 
   static getUserLists() async {
-    print("THE URL IS ${url + '/list/' + username + 'user-lists'}");
     var response = await http.get(
-        Uri.parse(url + '/list/' + username + 'user-lists'),
+        Uri.parse(url + '/list/' + username + '/user-lists'),
         headers: authHeader);
     if (response.statusCode == 200) {
-      print("THE LIST RESPONSE IS $response");
+      var raw = json.decode(response.body);
+      print("${raw["results"]}");
+
       return AllListModel.fromJson(json.decode(response.body));
     }
-    return Exception("Failed to get lists");
+
   }
 
   static createDiaryEntry({
