@@ -36,6 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
               InkWell(
                 onTap: () async {
                   await API.withoutInvitesignInWithGoogle(context);
+                  var _username = window.localStorage;
+                  UserDetails userDetails = await API.getUserDetails();
+                  _username['username'] = userDetails.username!;
+                  Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8.0),

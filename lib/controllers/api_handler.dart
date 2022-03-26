@@ -70,11 +70,13 @@ class API {
   }
 
   static getUserLists() async {
+    print("THE URL IS ${url + '/list/' + username + 'user-lists'}");
     var response = await http.get(
-        Uri.parse(url + '/list/' + username + '/user-lists'),
+        Uri.parse(url + '/list/' + username + 'user-lists'),
         headers: authHeader);
     if (response.statusCode == 200) {
-      return AllListModel.fromJson(json.decode(response.body)).results;
+      print("THE LIST RESPONSE IS $response");
+      return AllListModel.fromJson(json.decode(response.body));
     }
     return Exception("Failed to get lists");
   }
