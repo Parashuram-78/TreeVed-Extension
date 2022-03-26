@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.treeved.treeved">
+    package="com.treeved.extension">
    <application
         android:label="treeved"
         android:name="${applicationName}"

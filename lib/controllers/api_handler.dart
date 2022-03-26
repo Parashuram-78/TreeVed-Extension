@@ -10,6 +10,8 @@ import 'package:treeved/models/all_list_model.dart';
 import 'package:treeved/models/authenticated_model.dart';
 import 'package:treeved/models/user_model.dart';
 
+import '../src/screens/homepage.dart';
+
 class API {
   static const String baseUrl = "api-prod.treeved.com/v1";
   static const String baseUrl2 = "api-dev.treeved.com/v1";
@@ -100,7 +102,11 @@ class API {
         user = userCredential.user!;
         var token = await user.getIdToken();
         if (token != null) {
-          customSnackBar(context, "Logged in");
+          customSnackBar(context, "Logged in successfully!");
+
+          Navigator.of(context).push(
+            CupertinoPageRoute(builder: (context) => const MyHomePage()),
+          );
         }
         return continueWithGoogleSignIn(idToken: token,context: context);
       }

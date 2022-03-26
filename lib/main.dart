@@ -9,15 +9,17 @@ import 'package:treeved/src/screens/homepage.dart';
 import 'package:treeved/src/screens/login_screen.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: const FirebaseOptions(
-  //     apiKey: "AIzaSyDRN0XPMDOSy8G-Afmgkz_r9582_K2jrO8",
-  //     appId: "1:516082304162:android:d8bf0733bab33738be83fb",
-  //     messagingSenderId: "",
-  //     projectId: "treeved-9f7b6",
-  //   ),
-  // );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyDRN0XPMDOSy8G-Afmgkz_r9582_K2jrO8",
+      appId: "1:516082304162:android:38f7634358e8d393be83fb",
+      messagingSenderId: "516082304162",
+      projectId: "treeved-9f7b6",
+    ),
+  );
+
   runApp(const MyApp());
 }
 

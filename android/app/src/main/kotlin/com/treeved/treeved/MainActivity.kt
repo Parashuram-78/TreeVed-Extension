@@ -1,4 +1,4 @@
-package com.treeved.treeved
+package com.treeved.extension
 
 import io.flutter.embedding.android.FlutterActivity
 

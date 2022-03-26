@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:516082304162:android:38f7634358e8d393be83fb",
+        "android_client_info": {
+          "package_name": "com.treeved.extension"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516082304162-ovtq45ukq0qu7bhmibl4puud9ccprmnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRN0XPMDOSy8G-Afmgkz_r9582_K2jrO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516082304162-ovtq45ukq0qu7bhmibl4puud9ccprmnc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:516082304162:android:d8bf0733bab33738be83fb",
         "android_client_info": {
           "package_name": "com.treeved.treeved"
@@ -19,6 +48,14 @@
           "android_info": {
             "package_name": "com.treeved.treeved",
             "certificate_hash": "46ba9af3ad3466ad306e4a0c25694df919a1d33f"
+          }
+        },
+        {
+          "client_id": "516082304162-ahf4kojvac8tn3ti0qgjm7e93br1savk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.treeved.treeved",
+            "certificate_hash": "216484d305d5bd2d8fd40d846bb00c0abc671143"
           }
         },
         {
