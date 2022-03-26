@@ -19,9 +19,15 @@ class API {
   static const String developmentUrl = "https://$baseUrl2";
   static const String url = productionUrl;
   static const String userDetails = "/users/me/";
+
   static String get addResource => "/resource/search/url?q=";
-  static String addResourceToList({required String listId, required String resourceId}) => "/list/$listId/add-to-list/$resourceId";
-  static String addRatingToResource({required String resourceId}) => '/resource/$resourceId/rating/add/';
+
+  static String addResourceToList(
+          {required String listId, required String resourceId}) =>
+      "/list/$listId/add-to-list/$resourceId";
+
+  static String addRatingToResource({required String resourceId}) =>
+      '/resource/$resourceId/rating/add/';
   static String createDiary = '/diary-entry/add/';
 
   static String username = window.localStorage["username"] ?? '';
@@ -39,8 +45,10 @@ class API {
     "Charset": "utf-8",
   };
 
-  static loginUsingUsernameAndPassword({required String username, required String password}) async {
-    var response = await http.post(Uri.parse(url + "/auth/login/"), body: {"username": username, "password": password});
+  static loginUsingUsernameAndPassword(
+      {required String username, required String password}) async {
+    var response = await http.post(Uri.parse(url + "/auth/login/"),
+        body: {"username": username, "password": password});
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       refreshToken = jsonResponse["refresh"];
@@ -53,7 +61,8 @@ class API {
   }
 
   static getUserDetails() async {
-    var response = await http.get(Uri.parse(url + userDetails), headers: authHeader);
+    var response =
+        await http.get(Uri.parse(url + userDetails), headers: authHeader);
     if (response.statusCode == 200) {
       return UserDetails.fromJson(json.decode(response.body));
     }
@@ -61,7 +70,9 @@ class API {
   }
 
   static getUserLists() async {
-    var response = await http.get(Uri.parse(url + '/list/' + username + '/user-lists'), headers: authHeader);
+    var response = await http.get(
+        Uri.parse(url + '/list/' + username + '/user-lists'),
+        headers: authHeader);
     if (response.statusCode == 200) {
       return AllListModel.fromJson(json.decode(response.body)).results;
     }
@@ -77,7 +88,16 @@ class API {
       var response = await http.post(
         Uri.parse(url + createDiary),
         headers: authHeader,
-        body: json.encode({"url": resourceUrl, "rating": rating, 'rating_exists': true, 'content_exists': true, "text": "", "topics": [], 'visibility': 'everyone', "resource_type": "other"}),
+        body: json.encode({
+          "url": resourceUrl,
+          "rating": rating,
+          'rating_exists': true,
+          'content_exists': true,
+          "text": "",
+          "topics": [],
+          'visibility': 'everyone',
+          "resource_type": "other"
+        }),
       );
       customSnackBar(context, "Diary created successfully");
       if (response.statusCode == 200) {
@@ -89,7 +109,8 @@ class API {
     }
   }
 
-  static Future<dynamic> withoutInvitesignInWithGoogle(BuildContext context) async {
+  static Future<dynamic> withoutInvitesignInWithGoogle(
+      BuildContext context) async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     GoogleSignInAccount? googleSignInAccount;
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -97,39 +118,50 @@ class API {
     try {
       googleSignInAccount = (await googleSignIn.signIn())!;
       if (googleSignInAccount != null) {
-        GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-        AuthCredential credential = GoogleAuthProvider.credential(accessToken: googleSignInAuthentication.accessToken, idToken: googleSignInAuthentication.idToken);
-        UserCredential userCredential = await auth.signInWithCredential(credential);
+        GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+        AuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken);
+        UserCredential userCredential =
+            await auth.signInWithCredential(credential);
         user = userCredential.user!;
         var token = await user.getIdToken();
         if (token != null) {
-
           print("THE ID TOKEN IS $token");
           tempToken = token;
-
+          await continueWithGoogleSignIn(idToken: token, context: context);
           customSnackBar(context, "Logged in successfully!");
-          /*Navigator.of(context).push(
+
+          Navigator.of(context).push(
             CupertinoPageRoute(builder: (context) => const MyHomePage()),
-          );*/
-
+          );
         }
-
       }
     } catch (e) {
       print("THE ERROR IS MAIN $e");
     }
   }
 
-  static Future continueWithGoogleSignIn({required String idToken, required BuildContext context}) async {
-    dynamic response;
+  static Future continueWithGoogleSignIn(
+      {required String idToken, required BuildContext context}) async {
+    var response;
     String data = jsonEncode({"access_token": idToken});
+    print("THE RESPONSE CURRENT $response");
 
     try {
-      response = await http.post(Uri.parse(url + "/auth/social/signin/google-oauth2/"), body: data, headers: {"Content-Type": "application/json", "Charset": "utf-8"});
+      print("TRY BLOCK ENTER");
+      response = await http.post(
+          Uri.parse(url + "/auth/social/signin/google-oauth2/"),
+          body: data,
+          headers: {"Content-Type": "application/json", "Charset": "utf-8"});
+
+      print("THE RESPONSE IJS IS ${jsonDecode(response.body)}");
+      print("TRY BLOCK EXIT");
     } catch (e) {
       print("THE ERROR IS $e");
     }
-    final token = ApiTokenResponse.fromJson(response);
+    final token = ApiTokenResponse.fromJson(jsonDecode(response.body));
 
     AuthenticatedUser user = AuthenticatedUser(
       id: 0,
@@ -154,7 +186,8 @@ class API {
     required String listName,
   }) async {
     try {
-      var response = await http.get(Uri.parse(url + addResource + addedUrl), headers: authHeader);
+      var response = await http.get(Uri.parse(url + addResource + addedUrl),
+          headers: authHeader);
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         int id = jsonResponse["content"]["id"];
