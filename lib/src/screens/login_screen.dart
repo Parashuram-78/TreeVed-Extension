@@ -17,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 TextEditingController usernameController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 bool isObscure = true;
+bool isLoading = false;
 
 class _LoginScreenState extends State<LoginScreen> {
   @override
@@ -98,16 +99,34 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () async {
+                  if(mounted)
+                    {
+                      setState(() {
+                        isLoading = true;
+                      });
+                    }
                   await API.loginUsingUsernameAndPassword(username: usernameController.text, password: passwordController.text);
                   UserDetails userDetails = await API.getUserDetails();
                   var _username = window.localStorage;
                   _username['username'] = userDetails.username!;
                   Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
+                  if(mounted)
+                  {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
                   Navigator.of(context).push(
                     CupertinoPageRoute(builder: (context) => const MyHomePage()),
                   );
                 },
-                child: Container(
+                child:
+
+                isLoading ?
+                   CircularProgressIndicator(
+                     color: Colors.white,
+                   ) :
+                Container(
                   margin: const EdgeInsets.all(7),
                   child: const Text(
                     "Continue",
