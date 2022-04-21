@@ -190,6 +190,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                 resourceUrl: urlController.text,
                                 rating: sliderValue.toString(),
                               );
+                              urlController.clear();
                             }
 
                         },

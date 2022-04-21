@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       : Container(
                           margin: const EdgeInsets.all(7),
                           child: const Text(
-                            "Continue",
+                            "Login",
                             style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         ),

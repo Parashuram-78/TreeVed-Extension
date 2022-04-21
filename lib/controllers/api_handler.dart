@@ -21,6 +21,7 @@ class API {
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";
+  static final corsHeader = {"access-control-allow-origin": '*'};
 
   static String addResourceToList(
           {required String listId, required String resourceId}) =>
@@ -45,10 +46,12 @@ class API {
     "Charset": "utf-8",
   };
 
+
   static loginUsingUsernameAndPassword(
       {required String username, required String password}) async {
     var response = await http.post(Uri.parse(url + "/auth/login/"),
         body: {"username": username, "password": password});
+    response.headers.addEntries(corsHeader.entries);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       refreshToken = jsonResponse["refresh"];
@@ -63,6 +66,7 @@ class API {
   static getUserDetails() async {
     var response =
         await http.get(Uri.parse(url + userDetails), headers: authHeader);
+    response.headers.addEntries(corsHeader.entries);
     if (response.statusCode == 200) {
       return UserDetails.fromJson(json.decode(response.body));
     }
@@ -73,9 +77,10 @@ class API {
     var response = await http.get(
         Uri.parse(url + '/list/' + username + '/user-lists'),
         headers: authHeader);
+    response.headers.addEntries(corsHeader.entries);
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
-      print("${raw["results"]}");
+
 
       return AllListModel.fromJson(json.decode(response.body));
     }
@@ -102,6 +107,7 @@ class API {
           "resource_type": "other"
         }),
       );
+      response.headers.addEntries(corsHeader.entries);
       customSnackBar(context, "Diary Entry created successfully");
       if (response.statusCode == 200) {
         return true;
@@ -150,17 +156,17 @@ class API {
       {required String idToken, required BuildContext context}) async {
     var response;
     String data = jsonEncode({"access_token": idToken});
-    print("THE RESPONSE CURRENT $response");
+
 
     try {
-      print("TRY BLOCK ENTER");
       response = await http.post(
           Uri.parse(url + "/auth/social/signin/google-oauth2/"),
           body: data,
           headers: {"Content-Type": "application/json", "Charset": "utf-8"});
 
-      print("THE RESPONSE IJS IS ${jsonDecode(response.body)}");
-      print("TRY BLOCK EXIT");
+      response.headers.addEntries(corsHeader.entries);
+
+
     } catch (e) {
       print("THE ERROR IS $e");
     }
@@ -191,6 +197,7 @@ class API {
     try {
       var response = await http.get(Uri.parse(url + addResource + addedUrl),
           headers: authHeader);
+      response.headers.addEntries(corsHeader.entries);
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         int id = jsonResponse["content"]["id"];
