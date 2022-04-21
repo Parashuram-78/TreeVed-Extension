@@ -17,7 +17,7 @@ class API {
   static const String baseUrl2 = "api-dev.treeved.com/v1";
   static const String productionUrl = "https://$baseUrl";
   static const String developmentUrl = "https://$baseUrl2";
-  static const String url = productionUrl;
+  static const String url = "https://cors-anywhere.herokuapp.com/"+productionUrl;
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";
@@ -114,7 +114,7 @@ class API {
 
   static Future<dynamic> withoutInvitesignInWithGoogle(
       BuildContext context) async {
-    GoogleSignIn googleSignIn = GoogleSignIn();
+    GoogleSignIn googleSignIn = GoogleSignIn(clientId: "516082304162-n27s7oifq5q4n2aqpgu2vth10cbjl0n6.apps.googleusercontent.com");
     GoogleSignInAccount? googleSignInAccount;
     FirebaseAuth auth = FirebaseAuth.instance;
     User user;

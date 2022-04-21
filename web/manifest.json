@@ -1,17 +1,9 @@
 {
     "name": "TreeVed",
-    "short_name": "TreeVed",
     "version": "1.0.0",
     "description": "TreeVed is a platform for the discovery and sharing of knowledge and wisdom.",
-    "host_permissions": [
-        "<all_urls>"
-    ],
-    "permissions": [
-        "tabs",
-        "activeTab"
-    ],
     "content_security_policy": {
-        "extension_pages": "script-src 'self' ; object-src 'self' ; script-src-elem 'self' "
+        "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' https://cse.google.com/cse.js https://apis.google.com https://www.gstatic.com/;"
     },
     "action": {
         "default_popup": "index.html",
