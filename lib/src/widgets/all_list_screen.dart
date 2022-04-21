@@ -7,7 +7,8 @@ class AllListScreen extends StatefulWidget {
   final String url;
   final String rating;
 
-  const AllListScreen({Key? key, required this.url, required this.rating}) : super(key: key);
+  const AllListScreen({Key? key, required this.url, required this.rating})
+      : super(key: key);
 
   @override
   State<AllListScreen> createState() => _AllListScreenState();
@@ -16,14 +17,18 @@ class AllListScreen extends StatefulWidget {
 late AllListModel list;
 String selectedList = "";
 String selectedListName = "";
+bool isLoading = true;
 
 class _AllListScreenState extends State<AllListScreen> {
   @override
   void initState() {
+    var results;
     Future.microtask(() async {
-      var results = await API.getUserLists();
+      results = await API.getUserLists();
+    }).then((value) {
       setState(() {
-         list = results;
+        list = results;
+        isLoading = false;
       });
     });
     super.initState();
@@ -31,6 +36,11 @@ class _AllListScreenState extends State<AllListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

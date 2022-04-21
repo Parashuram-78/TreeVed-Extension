@@ -17,7 +17,7 @@ class API {
   static const String baseUrl2 = "api-dev.treeved.com/v1";
   static const String productionUrl = "https://$baseUrl";
   static const String developmentUrl = "https://$baseUrl2";
-  static const String url = "https://cors-anywhere.herokuapp.com/"+productionUrl;
+  static const String url = productionUrl;
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";

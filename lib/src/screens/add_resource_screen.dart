@@ -8,6 +8,7 @@ import 'package:treeved/src/widgets/all_list_screen.dart';
 
 class AddResourceScreen extends StatefulWidget {
   const AddResourceScreen({Key? key}) : super(key: key);
+
   @override
   State<AddResourceScreen> createState() => _AddResourceScreenState();
 }
@@ -15,17 +16,20 @@ class AddResourceScreen extends StatefulWidget {
 TextEditingController urlController = TextEditingController();
 TextEditingController noteController = TextEditingController();
 TextEditingController tagsController = TextEditingController();
-double sliderValue = 5;
+double sliderValue = 3;
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     Future.microtask(() async {
       UserDetails userDetails = await API.getUserDetails();
-      Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
+      Provider.of<UserProvider>(context, listen: false)
+          .setUserDetails(userDetails: userDetails);
     });
     super.initState();
   }
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +40,10 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Form(
+            key: _formKey,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal:15.0, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -46,6 +52,12 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   TextFormField(
+                    validator: (value) {
+                      if (value == null || value!.isEmpty) {
+                        return "Please enter a URL";
+                      }
+                      return null;
+                    },
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       hintText: "Paste Url here",
@@ -103,24 +115,35 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       OutlinedButton(
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(color: Colors.red)))),
                         onPressed: () async {
-                          await showModalBottomSheet(
-                            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
-                            isDismissible: true,
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return AllListScreen(
-                                rating: sliderValue.toString(),
-                                url: urlController.text,
-                              );
-                            },
-                          ).then((value) {
-                            setState(() {
-                              urlController.text = "";
-                              sliderValue = 5;
+                        if(_formKey.currentState!.validate())
+                          {
+                            await showModalBottomSheet(
+                              constraints: BoxConstraints(
+                                  maxHeight:
+                                  MediaQuery.of(context).size.height * 0.8),
+                              isDismissible: true,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return AllListScreen(
+                                  rating: sliderValue.toString(),
+                                  url: urlController.text,
+                                );
+                              },
+                            ).then((value) {
+                              setState(() {
+                                urlController.text = "";
+                                sliderValue =3;
+                              });
                             });
-                          });
+                          }
                         },
                         child: Row(
                           children: const [
@@ -137,12 +160,22 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                         ),
                       ),
                       OutlinedButton(
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    side: BorderSide(color: Colors.red)))),
                         onPressed: () async {
-                          await API.createDiaryEntry(
-                            context: context,
-                            resourceUrl: urlController.text,
-                            rating: sliderValue.toString(),
-                          );
+                          if(_formKey.currentState!.validate())
+                            {
+                              await API.createDiaryEntry(
+                                context: context,
+                                resourceUrl: urlController.text,
+                                rating: sliderValue.toString(),
+                              );
+                            }
+
                         },
                         child: Row(
                           children: const [
