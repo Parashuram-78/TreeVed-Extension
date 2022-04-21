@@ -102,7 +102,7 @@ class API {
           "resource_type": "other"
         }),
       );
-      customSnackBar(context, "Diary created successfully");
+      customSnackBar(context, "Diary Entry created successfully");
       if (response.statusCode == 200) {
         return true;
       }
