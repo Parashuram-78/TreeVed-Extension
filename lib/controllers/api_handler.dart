@@ -199,12 +199,7 @@ class API {
           headers: authHeader,
           body: json.encode({"rating": rating}),
         );
-        // var respo = await http.post(
-        //   Uri.parse(url + addRatingToResource(resourceId: '$id')),
-        //   headers: authHeader,
-        //   body: json.encode({"rating": rating}),
-        // );
-        customSnackBar(context, "Resource added to list $listName");
+
       }
     } catch (e) {
       customSnackBar(context, e.toString());

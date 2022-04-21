@@ -8,4 +8,8 @@ class UserProvider extends ChangeNotifier {
     this.userDetails = userDetails;
     notifyListeners();
   }
+
+
+
+
 }

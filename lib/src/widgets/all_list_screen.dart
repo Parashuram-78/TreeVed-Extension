@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:treeved/controllers/api_handler.dart';
 import 'package:treeved/models/all_list_model.dart';
 import 'package:treeved/src/screens/add_resource_screen.dart';
+import 'package:treeved/src/widgets/EmojiConverter.dart';
 
 class AllListScreen extends StatefulWidget {
   final String url;
   final String rating;
+  final BuildContext modalContext;
 
-  const AllListScreen({Key? key, required this.url, required this.rating})
+  const AllListScreen({Key? key, required this.url, required this.rating, required this.modalContext})
       : super(key: key);
 
   @override
@@ -18,6 +20,7 @@ late AllListModel list;
 String selectedList = "";
 String selectedListName = "";
 bool isLoading = true;
+bool isAdding = false;
 
 class _AllListScreenState extends State<AllListScreen> {
   @override
@@ -36,6 +39,7 @@ class _AllListScreenState extends State<AllListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
@@ -57,7 +61,7 @@ class _AllListScreenState extends State<AllListScreen> {
             const Text(
               "Select list to add to",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -65,12 +69,13 @@ class _AllListScreenState extends State<AllListScreen> {
         ),
         Expanded(
           child: ListView.builder(
+            scrollDirection: Axis.vertical,
             itemCount: list.results.length,
             itemBuilder: (context, index) {
               var rawList = list.results[index];
               return ListTile(
-                title: Text(rawList.name),
-                subtitle: Text(rawList.description),
+                title: Text(TextwithEmoji.text(value: rawList.name)),
+                subtitle: Text(TextwithEmoji.text(value: rawList.description)),
                 trailing: Radio(
                   value: rawList.id.toString(),
                   groupValue: selectedList,
@@ -85,27 +90,61 @@ class _AllListScreenState extends State<AllListScreen> {
             },
           ),
         ),
-        const SizedBox(height: 10),
-        TextButton(
-          onPressed: () async {
-            try {
-              await API.addtoList(
-                addedUrl: widget.url,
-                context: context,
-                listId: selectedList,
-                rating: widget.rating,
-                listName: selectedListName,
-              );
-            } catch (e) {
-              customSnackBar(context, e.toString());
-            }
-            Navigator.pop(context);
-          },
-          child: const Padding(
-            padding: EdgeInsets.all(6.0),
-            child: Text("Add"),
+        const SizedBox(height: 5),
+        Center(
+          child: Container(
+            width: 0.13 * size.width,
+            height: 0.08 * size.height,
+            child: MaterialButton(
+              color: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+              ),
+              onPressed: () async {
+                try {
+                  if(mounted)
+                    {
+                      setState(() {
+                        isAdding = true;
+                      });
+                    }
+                  await API.addtoList(
+                    addedUrl: widget.url,
+                    context: context,
+                    listId: selectedList,
+                    rating: widget.rating,
+                    listName: selectedListName,
+                  );
+                  if(mounted)
+                  {
+                    setState(() {
+                      isAdding = false;
+                    });
+                  }
+
+                  customSnackBar(context, "Successfully added Link to $selectedListName");
+                } catch (e) {
+                  customSnackBar(context, e.toString());
+                }
+                Navigator.pop(context);
+              },
+              child:
+              isAdding ?
+                  Center(
+                    child: Container(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(color: Colors.white,)),
+                  ) :
+
+              const Padding(
+                padding: EdgeInsets.all(6.0),
+                child: Text("Add"),
+              ),
+            ),
           ),
         ),
+        const SizedBox(height:5),
       ],
     );
   }

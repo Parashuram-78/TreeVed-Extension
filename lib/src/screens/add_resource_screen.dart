@@ -52,6 +52,13 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   TextFormField(
+                    enableInteractiveSelection: true,
+                    toolbarOptions: ToolbarOptions(
+                      copy: true,
+                      paste: true,
+                      cut: true,
+                      selectAll: true,
+                    ),
                     validator: (value) {
                       if (value == null || value!.isEmpty) {
                         return "Please enter a URL";
@@ -131,15 +138,24 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                               isDismissible: true,
                               isScrollControlled: true,
                               context: context,
-                              builder: (context) {
-                                return AllListScreen(
-                                  rating: sliderValue.toString(),
-                                  url: urlController.text,
+                              builder: (modalContext) {
+                                return Container(
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: AllListScreen(
+                                          rating: sliderValue.toString(),
+                                          url: urlController.text,
+                                        modalContext: modalContext,
+                                        )
+                                        ,
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ).then((value) {
                               setState(() {
-                                urlController.text = "";
                                 sliderValue =3;
                               });
                             });

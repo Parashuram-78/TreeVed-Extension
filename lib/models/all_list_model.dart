@@ -54,7 +54,6 @@ class Result {
     required this.content,
     required this.imageThumbnail,
     required this.image,
-    required this.mediaTypes,
     required this.description,
     required this.tags,
   });
@@ -69,23 +68,21 @@ class Result {
   List<Content> content;
   String imageThumbnail;
   String image;
-  String mediaTypes;
   String description;
   List<String> tags;
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
-        id: json["id"],
-        userId: json["user_id"],
+        id: json["id"] ?? 0,
+        userId: json["user_id"] ?? 0,
         user: UserDetail.fromJson(json["user"]),
-        name: json["name"],
-        slug: json["slug"],
+        name: json["name"] ?? "",
+        slug: json["slug"] ?? "",
         dateCreated: DateTime.parse(json["date_created"]),
-        isDefault: json["is_default"],
+        isDefault: json["is_default"] ?? false,
         content: List<Content>.from(json["content"].map((x) => Content.fromJson(x))),
-        imageThumbnail: json["image_thumbnail"],
-        image: json["image"],
-        mediaTypes: json["media_types"],
-        description: json["description"],
+        imageThumbnail: json["image_thumbnail"] ?? "",
+        image: json["image"] ?? "",
+        description: json["description"] ?? "",
         tags: List<String>.from(json["tags"].map((x) => x)),
       );
 
@@ -100,7 +97,6 @@ class Result {
         "content": List<dynamic>.from(content.map((x) => x.toJson())),
         "image_thumbnail": imageThumbnail,
         "image": image,
-        "media_types": mediaTypes,
         "description": description,
         "tags": List<dynamic>.from(tags.map((x) => x)),
       };
