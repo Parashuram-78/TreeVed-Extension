@@ -21,7 +21,7 @@ class API {
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";
-  static final corsHeader = {"access-control-allow-origin": '*'};
+/*  static final corsHeader = {"access-control-allow-origin": '*',};*/
 
   static String addResourceToList(
           {required String listId, required String resourceId}) =>
@@ -39,7 +39,6 @@ class API {
   static Map<String, String> authHeader = {
     "Content-Type": "application/json",
     "Authorization": "Bearer " + window.localStorage['accessToken']!,
-    "charset": "utf-8",
   };
   Map<String, String> jsonheaders = {
     "Content-Type": "application/json",
@@ -51,7 +50,9 @@ class API {
       {required String username, required String password}) async {
     var response = await http.post(Uri.parse(url + "/auth/login/"),
         body: {"username": username, "password": password});
-    response.headers.addEntries(corsHeader.entries);
+
+    print("The response headers are ${response.headers.toString()}");
+    print("THE RESPONSE STATUS ${response.statusCode}");
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       refreshToken = jsonResponse["refresh"];
@@ -64,9 +65,13 @@ class API {
   }
 
   static getUserDetails() async {
+    print("Entered get user details");
     var response =
         await http.get(Uri.parse(url + userDetails), headers: authHeader);
-    response.headers.addEntries(corsHeader.entries);
+    print("THE RESP HEADERS BEFfore ${response.headers.toString()}");
+    print("the response is ${response.body}");
+
+    print("THE RESP HEADERS AFTER ${response.headers.toString()}");
     if (response.statusCode == 200) {
       return UserDetails.fromJson(json.decode(response.body));
     }
@@ -77,7 +82,7 @@ class API {
     var response = await http.get(
         Uri.parse(url + '/list/' + username + '/user-lists'),
         headers: authHeader);
-    response.headers.addEntries(corsHeader.entries);
+
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
 
@@ -107,7 +112,7 @@ class API {
           "resource_type": "other"
         }),
       );
-      response.headers.addEntries(corsHeader.entries);
+
       customSnackBar(context, "Diary Entry created successfully");
       if (response.statusCode == 200) {
         return true;
@@ -164,7 +169,7 @@ class API {
           body: data,
           headers: {"Content-Type": "application/json", "Charset": "utf-8"});
 
-      response.headers.addEntries(corsHeader.entries);
+
 
 
     } catch (e) {
@@ -197,7 +202,7 @@ class API {
     try {
       var response = await http.get(Uri.parse(url + addResource + addedUrl),
           headers: authHeader);
-      response.headers.addEntries(corsHeader.entries);
+
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         int id = jsonResponse["content"]["id"];
