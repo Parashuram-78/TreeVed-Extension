@@ -2,9 +2,10 @@
     "name": "TreeVed",
     "version": "1.0.0",
     "description": "TreeVed is a platform for the discovery and sharing of knowledge and wisdom.",
-    "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; script-src-elem 'self' https://cse.google.com/cse.js https://apis.google.com https://www.gstatic.com/;"
-    },
+    "background": {
+        "service_worker": "firebase.js",
+        "type": "module"
+      },
     "action": {
         "default_popup": "index.html",
         "default_icon": "/icons/favicon-32x32.png"

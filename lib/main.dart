@@ -1,17 +1,19 @@
 import 'dart:html';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:treeved/providers/user_provider.dart';
 import 'package:treeved/src/screens/homepage.dart';
 import 'package:treeved/src/screens/login_screen.dart';
 
+import 'providers/list_notifier.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => ListNotifier()),
+  ], child: const MyApp()));
 }
 
 check() {

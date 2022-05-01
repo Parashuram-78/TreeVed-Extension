@@ -31,12 +31,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children:  [
                 Text(
-                  user?.firstName != null ?
+
+               user?.firstName != null ?
                   "${user?.firstName} ${user?.lastName}" : "Loading...",
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                    user!.username != null ?
+                  user!.username != null ?
                   TextwithEmoji.text(value: user!.username!) : "Loading...",
                   style: const TextStyle(
                     fontStyle: FontStyle.italic,
@@ -45,7 +46,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 Text(
-                    user!.bio != null ?
+                  user!.bio != null ?
                   TextwithEmoji.text(value: user!.bio!) : "Loading...",
                   style: const TextStyle(
                     fontSize: 10,

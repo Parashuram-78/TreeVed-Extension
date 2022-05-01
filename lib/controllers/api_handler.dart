@@ -10,6 +10,7 @@ import 'package:treeved/models/all_list_model.dart';
 import 'package:treeved/models/authenticated_model.dart';
 import 'package:treeved/models/user_model.dart';
 
+import '../models/page_model.dart';
 import '../src/screens/homepage.dart';
 
 class API {
@@ -17,10 +18,11 @@ class API {
   static const String baseUrl2 = "api-dev.treeved.com/v1";
   static const String productionUrl = "https://$baseUrl";
   static const String developmentUrl = "https://$baseUrl2";
-  static const String url = productionUrl;
+  static const String url = developmentUrl;
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";
+
 /*  static final corsHeader = {"access-control-allow-origin": '*',};*/
 
   static String addResourceToList(
@@ -44,7 +46,6 @@ class API {
     "Content-Type": "application/json",
     "Charset": "utf-8",
   };
-
 
   static loginUsingUsernameAndPassword(
       {required String username, required String password}) async {
@@ -78,18 +79,17 @@ class API {
     return NullThrownError();
   }
 
-  static getUserLists() async {
+ getUserLists({ required int pageKey}) async {
     var response = await http.get(
-        Uri.parse(url + '/list/' + username + '/user-lists'),
+        Uri.parse(url + '/list/' + username + '/user-lists'  + "?page=$pageKey"),
         headers: authHeader);
+    print("The user list response is ${response.body}");
 
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
 
-
-      return AllListModel.fromJson(json.decode(response.body));
+      return RawListModel.fromJson(json.decode(response.body));
     }
-
   }
 
   static createDiaryEntry({
@@ -125,7 +125,9 @@ class API {
 
   static Future<dynamic> withoutInvitesignInWithGoogle(
       BuildContext context) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(clientId: "516082304162-n27s7oifq5q4n2aqpgu2vth10cbjl0n6.apps.googleusercontent.com");
+    GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId:
+            "516082304162-n27s7oifq5q4n2aqpgu2vth10cbjl0n6.apps.googleusercontent.com");
     GoogleSignInAccount? googleSignInAccount;
     FirebaseAuth auth = FirebaseAuth.instance;
     User user;
@@ -162,16 +164,11 @@ class API {
     var response;
     String data = jsonEncode({"access_token": idToken});
 
-
     try {
       response = await http.post(
           Uri.parse(url + "/auth/social/signin/google-oauth2/"),
           body: data,
           headers: {"Content-Type": "application/json", "Charset": "utf-8"});
-
-
-
-
     } catch (e) {
       print("THE ERROR IS $e");
     }
@@ -211,13 +208,42 @@ class API {
           headers: authHeader,
           body: json.encode({"rating": rating}),
         );
-
       }
     } catch (e) {
       customSnackBar(context, e.toString());
     }
   }
+
+  static Future<RawMyPage> getMyPages() async {
+    final  response = await http.get(
+        Uri.parse(url + "/page/mypages/"),
+        headers: authHeader);
+    print("THE RESPONSE IS PAGES ${response.body}");
+    return RawMyPage.fromJson(json.decode(response.body));
+  }
+
+
+ getPageLists({required int pageId, required int pageKey}) async {
+    var response = await http.get(
+        Uri.parse(url + '/page/$pageId/list/all/' + "?page=$pageKey"),
+        headers: authHeader);
+
+    print("The page response is ${response.body}");
+
+    if (response.statusCode == 200) {
+      var raw = json.decode(response.body);
+
+      return RawListModel.fromJson(json.decode(response.body));
+    }
+  }
+
+
+
+
 }
+
+
+
 
 customSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(

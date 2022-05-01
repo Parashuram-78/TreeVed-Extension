@@ -1,5 +1,5 @@
-class AllListModel {
-  AllListModel({
+class RawListModel {
+  RawListModel({
     required this.links,
     required this.count,
     required this.results,
@@ -7,12 +7,12 @@ class AllListModel {
 
   Links links;
   int count;
-  List<Result> results;
+  List<ListModel> results;
 
-  factory AllListModel.fromJson(Map<String, dynamic> json) => AllListModel(
+  factory RawListModel.fromJson(Map<String, dynamic> json) => RawListModel(
         links: Links.fromJson(json["links"]),
         count: json["count"],
-        results: List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
+        results: List<ListModel>.from(json["results"].map((x) => ListModel.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -42,8 +42,8 @@ class Links {
       };
 }
 
-class Result {
-  Result({
+class ListModel {
+  ListModel({
     required this.id,
     required this.userId,
     required this.user,
@@ -71,7 +71,7 @@ class Result {
   String description;
   List<String> tags;
 
-  factory Result.fromJson(Map<String, dynamic> json) => Result(
+  factory ListModel.fromJson(Map<String, dynamic> json) => ListModel(
         id: json["id"] ?? 0,
         userId: json["user_id"] ?? 0,
         user: UserDetail.fromJson(json["user"]),
