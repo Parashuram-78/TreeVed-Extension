@@ -1,3 +1,13 @@
+// To parse this JSON data, do
+//
+//     final allList = allListFromJson(jsonString);
+
+import 'dart:convert';
+
+
+RawListModel allListFromJson(String str) =>
+    RawListModel.fromJson(json.decode(str));
+
 class RawListModel {
   RawListModel({
     required this.links,
@@ -10,21 +20,16 @@ class RawListModel {
   List<ListModel> results;
 
   factory RawListModel.fromJson(Map<String, dynamic> json) => RawListModel(
-        links: Links.fromJson(json["links"]),
-        count: json["count"],
-        results: List<ListModel>.from(json["results"].map((x) => ListModel.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "links": links.toJson(),
-        "count": count,
-        "results": List<dynamic>.from(results.map((x) => x.toJson())),
-      };
+    links: Links.fromJson(json["links"]),
+    count: json["count"],
+    results: List<ListModel>.from(
+        json["results"].map((x) => ListModel.fromJson(x))),
+  );
 }
 
 class Links {
   Links({
-    this.next,
+    required this.next,
     this.previous,
   });
 
@@ -32,144 +37,135 @@ class Links {
   dynamic previous;
 
   factory Links.fromJson(Map<String, dynamic> json) => Links(
-        next: json["next"],
-        previous: json["previous"],
-      );
+    next: json["next"],
+    previous: json["previous"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "next": next,
-        "previous": previous,
-      };
+    "next": next,
+    "previous": previous,
+  };
 }
 
 class ListModel {
   ListModel({
-    required this.id,
-    required this.userId,
-    required this.user,
-    required this.name,
-    required this.slug,
-    required this.dateCreated,
-    required this.isDefault,
-    required this.content,
-    required this.imageThumbnail,
-    required this.image,
-    required this.description,
-    required this.tags,
+    this.id,
+    this.userId,
+    this.user,
+    this.name,
+    this.description,
+    this.tags,
+    this.content,
+    this.slug,
+    this.isdefault,
+    this.image,
+    this.imagethumbnail,
   });
 
-  int id;
-  int userId;
-  UserDetail user;
-  String name;
-  String slug;
-  DateTime dateCreated;
-  bool isDefault;
-  List<Content> content;
-  String imageThumbnail;
-  String image;
-  String description;
-  List<String> tags;
+  int? id;
+  int? userId;
+  MyUser? user;
+  String? name;
+  String? description;
+  List<dynamic>? tags;
+  List<Content>? content;
+  bool? isdefault;
+  String? slug;
+  String? mediatypes;
+  String? image;
+  String? imagethumbnail;
 
   factory ListModel.fromJson(Map<String, dynamic> json) => ListModel(
-        id: json["id"] ?? 0,
-        userId: json["user_id"] ?? 0,
-        user: UserDetail.fromJson(json["user"]),
-        name: json["name"] ?? "",
-        slug: json["slug"] ?? "",
-        dateCreated: DateTime.parse(json["date_created"]),
-        isDefault: json["is_default"] ?? false,
-        content: List<Content>.from(json["content"].map((x) => Content.fromJson(x))),
-        imageThumbnail: json["image_thumbnail"] ?? "",
-        image: json["image"] ?? "",
-        description: json["description"] ?? "",
-        tags: List<String>.from(json["tags"].map((x) => x)),
-      );
+    id: json["id"],
+    userId: json["user_id"],
+    user: MyUser.fromJson(json["user"]),
+    name: json["name"],
+    description: json["description"],
+    tags: List<dynamic>.from(json["tags"].map((x) => x)),
+    content:
+    List<Content>.from(json["content"].map((x) => Content.fromJson(x))),
+    slug: json['slug'],
+    isdefault: json['is_default'],
+    image: json['image'],
+    imagethumbnail: json['image_thumbnail'],
+  );
 
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "user_id": userId,
-        "user": user.toJson(),
-        "name": name,
-        "slug": slug,
-        "date_created": dateCreated.toIso8601String(),
-        "is_default": isDefault,
-        "content": List<dynamic>.from(content.map((x) => x.toJson())),
-        "image_thumbnail": imageThumbnail,
-        "image": image,
-        "description": description,
-        "tags": List<dynamic>.from(tags.map((x) => x)),
-      };
+  String toApiRequestBody() {
+    return jsonEncode(
+        {"name": name, "description": description, "topics": tags});
+  }
 }
 
 class Content {
   Content({
-    required this.id,
-    required this.title,
-    required this.notes,
-    required this.url,
-    required this.resourceType,
-    required this.rating,
-    required this.tags,
+    this.id,
+    this.title,
+    this.notes,
+    this.url,
+    this.tags,
+    this.resourceType,
+    this.rating,
+    required this.recentlyAdded
   });
 
-  int id;
-  String title;
-  String notes;
-  String url;
-  String resourceType;
-  String rating;
-  List<String> tags;
+  int? id;
+  String? title;
+  String? notes;
+  String? url;
+  List<String>? tags;
+  String? resourceType;
+  String? rating;
+  bool recentlyAdded = false;
 
   factory Content.fromJson(Map<String, dynamic> json) => Content(
-        id: json["id"],
-        title: json["title"],
-        notes: json["notes"],
-        url: json["url"],
-        resourceType: json["resource_type"],
-        rating: json["rating"],
-        tags: List<String>.from(json["tags"].map((x) => x)),
-      );
+      id: json["id"],
+      title: json["title"],
+      notes: json["notes"],
+      url: json["url"],
+      tags: List<String>.from(
+        json["tags"].map((x) => x),
+      ),
+      resourceType: json["resource_type"] == "select" || json["resource_type"] == "" ? "other" : json["resource_type"] ?? "other" ,
+      rating: json["rating"],
+      recentlyAdded: false
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "notes": notes,
-        "url": url,
-        "resource_type": resourceType,
-        "rating": rating,
-        "tags": List<dynamic>.from(tags.map((x) => x)),
-      };
+    "id": id,
+    "title": title,
+    "notes": notes,
+    "url": url,
+    "tags": List<dynamic>.from(tags!.map((x) => x)),
+  };
 }
 
-class UserDetail {
-  UserDetail({
-    required this.id,
+class MyUser {
+  MyUser({
     required this.fullName,
     required this.username,
     required this.bio,
     required this.profilePicture,
   });
 
-  int id;
   String fullName;
   String username;
   String bio;
   String profilePicture;
 
-  factory UserDetail.fromJson(Map<String, dynamic> json) => UserDetail(
-        id: json["id"],
-        fullName: json["full_name"],
-        username: json["username"],
-        bio: json["bio"],
-        profilePicture: json["profile_picture"],
-      );
+  factory MyUser.fromJson(Map<String, dynamic> json) => MyUser(
+      fullName: json["full_name"],
+      username: json["username"],
+      bio: json["bio"],
+      profilePicture:
+      json["profile_picture"] ?? "http://4.bp.blogspot.com/-zsbDeAUd8aY/US7F0ta5d9I/AAAAAAAAEKY/UL2AAhHj6J8/s1600/facebook-default-no-profile-pic.jpg");
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "full_name": fullName,
-        "username": username,
-        "bio": bio,
-        "profile_picture": profilePicture,
-      };
+    "full_name": fullName,
+    "username": username,
+    "bio": bio,
+    "profile_picture": profilePicture
+  };
 }
+
+
+

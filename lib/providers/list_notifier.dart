@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:treeved/controllers/api_handler.dart';
+import 'package:treeved/models/collection_model.dart';
 
 import '../models/all_list_model.dart';
 
 class ListNotifier extends ChangeNotifier {
   late RawListModel rawUserList;
   List<ListModel> myList = [];
-  List<ListModel> myPageList = [];
+  List<MinimalCollectionModel> myPageList = [];
   int getUserListPageKey = 1;
   int getPageListPageKey = 1;
 

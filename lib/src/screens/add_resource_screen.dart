@@ -108,14 +108,14 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                               setState(() {
                                 selectedPoster =
                                     posterList.indexOf(value.toString());
-                                print("Current index  = ${posterList.indexOf(value.toString())}");
+                                print(
+                                    "Current index  = ${posterList.indexOf(value.toString())}");
                                 if (posterList.indexOf(value.toString()) != 0) {
                                   isPageManagement = true;
                                 } else {
                                   isPageManagement = false;
                                 }
                               });
-
                             },
                           ),
                         )
@@ -215,36 +215,71 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                         side: BorderSide(color: Colors.red)))),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                await showModalBottomSheet(
-                                  constraints: BoxConstraints(
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              0.8),
-                                  isDismissible: true,
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (modalContext) {
-                                    return Container(
-                                      child: Column(
-                                        children: [
-                                          Expanded(
-                                            child: AllListScreen(
-                                              pageId: isPageManagement ? myPages[selectedPoster -1].id : 0,
-                                              isPage: isPageManagement,
-                                              rating: sliderValue.toString(),
-                                              url: urlController.text,
-                                              modalContext: modalContext,
+                                if (isPageManagement) {
+                                  await showModalBottomSheet(
+                                    constraints: BoxConstraints(
+                                        maxHeight:
+                                            MediaQuery.of(context).size.height *
+                                                0.8),
+                                    isDismissible: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (modalContext) {
+                                      return Container(
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: AllListScreen(
+                                                pageId:
+                                                    myPages[selectedPoster - 1]
+                                                        .id,
+                                                isPage: true,
+                                                rating: sliderValue.toString(),
+                                                url: urlController.text,
+                                                modalContext: modalContext,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ).then((value) {
-                                  setState(() {
-                                    sliderValue = 3;
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ).then((value) {
+                                    setState(() {
+                                      sliderValue = 3;
+                                    });
                                   });
-                                });
+                                } else {
+                                  await showModalBottomSheet(
+                                    constraints: BoxConstraints(
+                                        maxHeight:
+                                            MediaQuery.of(context).size.height *
+                                                0.8),
+                                    isDismissible: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (modalContext) {
+                                      return Container(
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: AllListScreen(
+                                                pageId: 0,
+                                                isPage: false,
+                                                rating: sliderValue.toString(),
+                                                url: urlController.text,
+                                                modalContext: modalContext,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ).then((value) {
+                                    setState(() {
+                                      sliderValue = 3;
+                                    });
+                                  });
+                                }
                               }
                             },
                             child: Row(

@@ -80,9 +80,11 @@ class API {
   }
 
  getUserLists({ required int pageKey}) async {
+
     var response = await http.get(
         Uri.parse(url + '/list/' + username + '/user-lists'  + "?page=$pageKey"),
         headers: authHeader);
+    print("The user list url is ${url + '/list/' + username + '/user-lists'  + "?page=$pageKey"}");
     print("The user list response is ${response.body}");
 
     if (response.statusCode == 200) {
@@ -228,12 +230,14 @@ class API {
         Uri.parse(url + '/page/$pageId/list/all/' + "?page=$pageKey"),
         headers: authHeader);
 
+    print("The endpoint is ${url + '/page/$pageId/list/all/' + "?page=$pageKey"}");
+
     print("The page response is ${response.body}");
 
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
 
-      return RawListModel.fromJson(json.decode(response.body));
+      return json.decode(response.body);
     }
   }
 

@@ -111,15 +111,15 @@ class _AllListScreenState extends State<AllListScreen> {
                             children: [
                               ListTile(
                                 title:
-                                    Text(TextwithEmoji.text(value: rawList.name)),
+                                    Text(TextwithEmoji.text(value: rawList.name!)),
                                 subtitle: Text(
-                                    TextwithEmoji.text(value: rawList.description)),
+                                    TextwithEmoji.text(value: rawList.description!)),
                                 trailing: Radio(
                                   value: rawList.id.toString(),
                                   groupValue: selectedList,
                                   onChanged: (value) {
                                     setState(() {
-                                      selectedListName = rawList.name;
+                                      selectedListName = rawList.name!;
                                       selectedList = value!.toString();
                                     });
                                   },
