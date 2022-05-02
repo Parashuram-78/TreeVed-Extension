@@ -168,4 +168,27 @@ class MyUser {
 }
 
 
+class RawPageListModel {
+  RawPageListModel({
+    required this.next,
+    required this.previous,
+    required this.count,
+    required this.results,
+  });
+
+  String next;
+  String previous;
+  int count;
+  List<ListModel> results;
+
+  factory RawPageListModel.fromJson(Map<String, dynamic> json) => RawPageListModel(
+   next: json["next"]  ?? "",
+   previous: json["previous"] ?? "",
+    count: json["count"],
+    results: List<ListModel>.from(
+        json["results"].map((x) => ListModel.fromJson(x))),
+  );
+}
+
+
 

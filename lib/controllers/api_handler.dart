@@ -237,7 +237,7 @@ class API {
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
 
-      return json.decode(response.body);
+      return RawPageListModel.fromJson(raw);
     }
   }
 

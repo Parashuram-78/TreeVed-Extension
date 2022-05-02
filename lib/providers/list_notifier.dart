@@ -6,8 +6,9 @@ import '../models/all_list_model.dart';
 
 class ListNotifier extends ChangeNotifier {
   late RawListModel rawUserList;
+  late RawPageListModel rawPageListModel;
   List<ListModel> myList = [];
-  List<MinimalCollectionModel> myPageList = [];
+  List<ListModel> myPageList = [];
   int getUserListPageKey = 1;
   int getPageListPageKey = 1;
 
@@ -16,9 +17,7 @@ class ListNotifier extends ChangeNotifier {
   API listService = API();
 
   Future getUserList(
-      {required bool firstRun,
-      int? pageId,
-      required isPage}) async {
+      {required bool firstRun, int? pageId, required isPage}) async {
     if (firstRun) {
       myList.clear();
       notifyListeners();
@@ -32,31 +31,44 @@ class ListNotifier extends ChangeNotifier {
     if (isPage) {
       response = await listService.getPageLists(
           pageKey: getUserListPageKey, pageId: pageId!);
+      rawPageListModel = response;
+      if (rawPageListModel.count > myList.length) {
+        hasMore = true;
+        notifyListeners();
+        await addToUserListArray(myList, rawPageListModel);
+      }
+
+      if (rawPageListModel.count == myList.length) {
+        hasMore = false;
+        notifyListeners();
+      } else {
+        getUserListPageKey++;
+      }
     } else {
       response = await listService.getUserLists(pageKey: getUserListPageKey);
+      rawUserList = response;
+      if (rawUserList.count > myList.length) {
+        hasMore = true;
+        notifyListeners();
+        await addToUserListArray(myList, rawUserList);
+      }
+
+      if (rawUserList.count == myList.length) {
+        hasMore = false;
+        notifyListeners();
+      } else {
+        getUserListPageKey++;
+      }
     }
-    rawUserList = response;
+
     print("Notifier response is $response");
-
-    if (rawUserList.count > myList.length) {
-      hasMore = true;
-      notifyListeners();
-      await addToUserListArray(myList);
-    }
-
-    if (rawUserList.count == myList.length) {
-      hasMore = false;
-      notifyListeners();
-    } else {
-      getUserListPageKey++;
-    }
 
     notifyListeners();
   }
 
-  addToUserListArray(List<ListModel> listModel) {
-    for (int i = 0; i < rawUserList.results.length; i++) {
-      listModel.add(rawUserList.results[i]);
+  addToUserListArray(List<ListModel> listModel, dynamic rawModel) {
+    for (int i = 0; i < rawModel.results.length; i++) {
+      listModel.add(rawModel.results[i]);
     }
   }
 }
