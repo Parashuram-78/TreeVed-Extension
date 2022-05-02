@@ -203,8 +203,12 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       ),
                       const SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          isPageManagement ?
+                          SizedBox(
+                            width: 0.05 * size.width,
+                          ) : Container(),
                           OutlinedButton(
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all<
@@ -295,6 +299,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                 ),
                               ],
                             ),
+                          ),
+                          SizedBox(
+                            width: 0.05 * size.width,
                           ),
                           isPageManagement
                               ? Container()
