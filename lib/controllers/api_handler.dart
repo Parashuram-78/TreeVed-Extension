@@ -115,13 +115,13 @@ class API {
         }),
       );
 
-      customSnackBar(context, "Diary Entry created successfully");
+      customSnackBar(context, "Diary Entry created successfully", "");
       if (response.statusCode == 200) {
         return true;
       }
       return false;
     } catch (e) {
-      customSnackBar(context, "Failed to create diary entry");
+      customSnackBar(context, "Failed to create diary entry", "");
     }
   }
 
@@ -149,7 +149,7 @@ class API {
           print("THE ID TOKEN IS $token");
           tempToken = token;
           await continueWithGoogleSignIn(idToken: token, context: context);
-          customSnackBar(context, "Logged in successfully!");
+          customSnackBar(context, "Logged in successfully!", "");
 
           Navigator.of(context).push(
             CupertinoPageRoute(builder: (context) => const MyHomePage()),
@@ -212,7 +212,7 @@ class API {
         );
       }
     } catch (e) {
-      customSnackBar(context, e.toString());
+      customSnackBar(context, e.toString(), "");
     }
   }
 
@@ -249,10 +249,18 @@ class API {
 
 
 
-customSnackBar(BuildContext context, String message) {
+customSnackBar(BuildContext context, String message, String listName) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(message),
+      content: Row(
+        children: [
+          Text(message),
+          Text(" $listName", style: TextStyle(
+            color: Colors.blue,
+            fontWeight: FontWeight.bold
+          ),),
+        ],
+      ),
       duration: const Duration(seconds: 8),
     ),
   );

@@ -178,9 +178,9 @@ class _AllListScreenState extends State<AllListScreen> {
                               }
 
                               customSnackBar(context,
-                                  "Successfully added Link to $selectedListName");
+                                  "Successfully added Link to", selectedListName);
                             } catch (e) {
-                              customSnackBar(context, e.toString());
+                              customSnackBar(context, e.toString(), "");
                             }
                             Navigator.pop(context);
                           },

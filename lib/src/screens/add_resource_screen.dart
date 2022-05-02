@@ -315,14 +315,18 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                               side: BorderSide(
                                                   color: Colors.red)))),
                                   onPressed: () async {
-                                    if (_formKey.currentState!.validate()) {
+
+                                    customSnackBar(context,
+                                        "Successfully added Link to", selectedListName);
+
+                                    /* if (_formKey.currentState!.validate()) {
                                       await API.createDiaryEntry(
                                         context: context,
                                         resourceUrl: urlController.text,
                                         rating: sliderValue.toString(),
                                       );
                                       urlController.clear();
-                                    }
+                                    }*/
                                   },
                                   child: Row(
                                     children: const [
