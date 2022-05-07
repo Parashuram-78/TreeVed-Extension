@@ -18,7 +18,7 @@ class API {
   static const String baseUrl2 = "api-dev.treeved.com/v1";
   static const String productionUrl = "https://$baseUrl";
   static const String developmentUrl = "https://$baseUrl2";
-  static const String url = developmentUrl;
+  static const String url = productionUrl;
   static const String userDetails = "/users/me/";
 
   static String get addResource => "/resource/search/url?q=";
@@ -79,12 +79,12 @@ class API {
     return NullThrownError();
   }
 
- getUserLists({ required int pageKey}) async {
-
+  getUserLists({required int pageKey}) async {
     var response = await http.get(
-        Uri.parse(url + '/list/' + username + '/user-lists'  + "?page=$pageKey"),
+        Uri.parse(url + '/list/' + username + '/user-lists' + "?page=$pageKey"),
         headers: authHeader);
-    print("The user list url is ${url + '/list/' + username + '/user-lists'  + "?page=$pageKey"}");
+    print(
+        "The user list url is ${url + '/list/' + username + '/user-lists' + "?page=$pageKey"}");
     print("The user list response is ${response.body}");
 
     if (response.statusCode == 200) {
@@ -217,20 +217,19 @@ class API {
   }
 
   static Future<RawMyPage> getMyPages() async {
-    final  response = await http.get(
-        Uri.parse(url + "/page/mypages/"),
-        headers: authHeader);
+    final response =
+        await http.get(Uri.parse(url + "/page/mypages/"), headers: authHeader);
     print("THE RESPONSE IS PAGES ${response.body}");
     return RawMyPage.fromJson(json.decode(response.body));
   }
 
-
- getPageLists({required int pageId, required int pageKey}) async {
+  getPageLists({required int pageId, required int pageKey}) async {
     var response = await http.get(
         Uri.parse(url + '/page/$pageId/list/all/' + "?page=$pageKey"),
         headers: authHeader);
 
-    print("The endpoint is ${url + '/page/$pageId/list/all/' + "?page=$pageKey"}");
+    print(
+        "The endpoint is ${url + '/page/$pageId/list/all/' + "?page=$pageKey"}");
 
     print("The page response is ${response.body}");
 
@@ -240,14 +239,7 @@ class API {
       return RawPageListModel.fromJson(raw);
     }
   }
-
-
-
-
 }
-
-
-
 
 customSnackBar(BuildContext context, String message, String listName) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -255,10 +247,10 @@ customSnackBar(BuildContext context, String message, String listName) {
       content: Row(
         children: [
           Text(message),
-          Text(" $listName", style: TextStyle(
-            color: Colors.blue,
-            fontWeight: FontWeight.bold
-          ),),
+          Text(
+            " $listName",
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
       duration: const Duration(seconds: 8),

@@ -86,7 +86,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   : hasPage
                       ? Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0, vertical: 8),
+                              horizontal: 15.0, ),
                           child: DropdownButtonFormField(
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -121,13 +121,13 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                         )
                       : Container(),
               SizedBox(
-                height: 0.015 * size.height,
+                height: 0.01 * size.height,
               ),
               Form(
                 key: _formKey,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 15.0, ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

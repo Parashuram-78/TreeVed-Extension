@@ -6,6 +6,7 @@ import 'package:treeved/controllers/api_handler.dart';
 import 'package:treeved/models/user_model.dart';
 import 'package:treeved/providers/user_provider.dart';
 import 'package:treeved/src/screens/homepage.dart';
+import 'package:treeved/src/screens/privacy_policy_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ TextEditingController passwordController = TextEditingController();
 bool isObscure = true;
 bool isLoading = false;
 final _formKey = GlobalKey<FormState>();
-
 
 class _LoginScreenState extends State<LoginScreen> {
   @override
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 70,
               ),
               const SizedBox(height: 10),
-              InkWell(
+              /*InkWell(
                 onTap: () async {
                   await API.withoutInvitesignInWithGoogle(context);
                   var _username = window.localStorage;
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text("Continue with Google"),
                 ),
               ),
-              SizedBox(height: 0.03 * size.height),
+              SizedBox(height: 0.03 * size.height),*/
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: TextFormField(
@@ -166,7 +166,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                 ),
-              )
+              ),
+              SizedBox(height: 0.03 * size.height),
+              TextButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                              child: PrivacyPolicyScreen(isMainScreen: false),
+                            ));
+                  },
+                  child: Text(
+                    "Privacy Policy",
+                  ))
             ],
           ),
         ),

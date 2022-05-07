@@ -4,8 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:treeved/providers/user_provider.dart';
+import 'package:treeved/routes/routes.dart';
 import 'package:treeved/src/screens/homepage.dart';
 import 'package:treeved/src/screens/login_screen.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 import 'providers/list_notifier.dart';
 
@@ -33,7 +35,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
+        routerDelegate: routesDelegate,
         debugShowCheckedModeBanner: false,
         title: "TreeVed",
         theme: ThemeData(
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: check(),
+        routeInformationParser: VxInformationParser(),
       ),
     );
   }
