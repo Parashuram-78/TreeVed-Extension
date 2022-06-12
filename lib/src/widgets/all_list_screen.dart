@@ -195,7 +195,7 @@ class _AllListScreenState extends State<AllListScreen> {
                                 )
                               : const Padding(
                                   padding: EdgeInsets.all(6.0),
-                                  child: Text("Add"),
+                                  child: Text("Add", style: TextStyle(color: Colors.white),),
                                 ),
                         ),
                       ),

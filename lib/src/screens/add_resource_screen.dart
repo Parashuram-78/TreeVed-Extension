@@ -29,13 +29,16 @@ bool isPagesLoading = true;
 bool isProfileDetailsLoading = true;
 bool isPageManagement = false;
 
+bool isDiaryAdding = false;
+bool isDiaryShareAsPostAdding = false;
+
+
 class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     Future.microtask(() async {
       UserDetails userDetails = await API.getUserDetails();
-      Provider.of<UserProvider>(context, listen: false)
-          .setUserDetails(userDetails: userDetails);
+      Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
 
       posterList.add(userDetails.username!);
       setState(() {
@@ -54,6 +57,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   }
 
   final _formKey = GlobalKey<FormState>();
+  static int tempId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +77,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
             children: [
               hasPage
                   ? Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
                       alignment: Alignment.centerLeft,
                       child: const Text("Currently Managing:"),
                     )
@@ -86,7 +89,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   : hasPage
                       ? Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 15.0, ),
+                            horizontal: 15.0,
+                          ),
                           child: DropdownButtonFormField(
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -106,10 +110,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                             }).toList(),
                             onChanged: (value) {
                               setState(() {
-                                selectedPoster =
-                                    posterList.indexOf(value.toString());
-                                print(
-                                    "Current index  = ${posterList.indexOf(value.toString())}");
+                                selectedPoster = posterList.indexOf(value.toString());
+                                print("Current index  = ${posterList.indexOf(value.toString())}");
                                 if (posterList.indexOf(value.toString()) != 0) {
                                   isPageManagement = true;
                                 } else {
@@ -126,8 +128,9 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
               Form(
                 key: _formKey,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15.0, ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15.0,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -205,26 +208,20 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          isPageManagement ?
-                          SizedBox(
-                            width: 0.05 * size.width,
-                          ) : Container(),
+                          isPageManagement
+                              ? SizedBox(
+                                  width: 0.05 * size.width,
+                                )
+                              : Container(),
                           OutlinedButton(
                             style: ButtonStyle(
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        side: BorderSide(color: Colors.red)))),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: Colors.red)))),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 if (isPageManagement) {
                                   await showModalBottomSheet(
-                                    constraints: BoxConstraints(
-                                        maxHeight:
-                                            MediaQuery.of(context).size.height *
-                                                0.8),
+                                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
                                     isDismissible: true,
                                     isScrollControlled: true,
                                     context: context,
@@ -234,9 +231,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                           children: [
                                             Expanded(
                                               child: AllListScreen(
-                                                pageId:
-                                                    myPages[selectedPoster - 1]
-                                                        .id,
+                                                pageId: myPages[selectedPoster - 1].id,
                                                 isPage: true,
                                                 rating: sliderValue.toString(),
                                                 url: urlController.text,
@@ -254,10 +249,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                   });
                                 } else {
                                   await showModalBottomSheet(
-                                    constraints: BoxConstraints(
-                                        maxHeight:
-                                            MediaQuery.of(context).size.height *
-                                                0.8),
+                                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
                                     isDismissible: true,
                                     isScrollControlled: true,
                                     context: context,
@@ -301,48 +293,110 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                             ),
                           ),
                           SizedBox(
-                            width: 0.05 * size.width,
+                            width: 0.02 * size.width,
                           ),
                           isPageManagement
                               ? Container()
-                              : OutlinedButton(
-                                  style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              side: BorderSide(
-                                                  color: Colors.red)))),
-                                  onPressed: () async {
-
-                                    if (_formKey.currentState!.validate()) {
-                                      await API.createDiaryEntry(
-                                        context: context,
-                                        resourceUrl: urlController.text,
-                                        rating: sliderValue.toString(),
-                                      );
-                                      urlController.clear();
-                                    }
-                                  },
-                                  child: Row(
-                                    children: const [
-                                      Icon(Icons.add, size: 18),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "Add to Diary",
-                                        style: TextStyle(fontSize: 12),
+                              : isDiaryAdding
+                                  ? Container(
+                                      height: 20,
+                                      width: 20,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    )
+                                  : OutlinedButton(
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: Colors.red)))),
+                                      onPressed: () async {
+                                        if (isDiaryShareAsPostAdding) {
+                                          debugPrint("isDiaryShareAsPostAdding");
+                                        } else {
+                                          if (_formKey.currentState!.validate()) {
+                                            setState(() {
+                                              isDiaryAdding = true;
+                                            });
+                                            await API.createDiaryEntry(
+                                              context: context,
+                                              resourceUrl: urlController.text,
+                                              rating: sliderValue.toString(),
+                                            ).then((value) {
+                                              print("value: $value");
+                                            });
+                                            urlController.clear();
+                                            setState(() {
+                                              isDiaryAdding = false;
+                                            });
+                                          }
+                                        }
+                                      },
+                                      child: Row(
+                                        children: const [
+                                          Icon(Icons.add, size: 18),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            "Add to Diary",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                         ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20)
+              const SizedBox(height:5 ),
+              isDiaryShareAsPostAdding
+                  ? Container(
+                      height: 20,
+                      width: 20,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : OutlinedButton(
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: Colors.red)))),
+                      onPressed: () async {
+                        if (isDiaryAdding) {
+                          debugPrint("isDiaryAdding");
+                        } else {
+                          setState(() {
+                            isDiaryShareAsPostAdding = true;
+                          });
+
+                          if (_formKey.currentState!.validate()) {
+                            await API
+                                .createDiaryEntry(
+                              context: context,
+                              resourceUrl: urlController.text,
+                              rating: sliderValue.toString(),
+                            );
+                            API api = API();
+                            await api.shareAsPost(context: context, id: Provider.of<UserProvider>(context, listen: false).tempId);
+                            urlController.clear();
+                          }
+                          setState(() {
+                            isDiaryShareAsPostAdding = false;
+                          });
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.add, size: 18),
+                          SizedBox(width: 5),
+                          Text(
+                            "Add to Diary and Share as post",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
             ],
           ),
         ),

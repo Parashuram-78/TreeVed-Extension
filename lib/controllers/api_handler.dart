@@ -6,9 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:treeved/models/all_list_model.dart';
 import 'package:treeved/models/authenticated_model.dart';
 import 'package:treeved/models/user_model.dart';
+import 'package:treeved/providers/user_provider.dart';
+import 'package:treeved/src/screens/add_resource_screen.dart';
 
 import '../models/page_model.dart';
 import '../src/screens/homepage.dart';
@@ -70,7 +73,6 @@ class API {
       accessToken = jsonResponse["access"];
 
       window.localStorage["accessToken"] = accessToken;
-
     } else {
       throw Exception("Failed to refresh token");
     }
@@ -117,12 +119,17 @@ class API {
           "resource_type": "other"
         }),
       );
-
       customSnackBar(context, "Diary Entry created successfully", "");
+      var decodedResponse = json.decode(response.body);
+      var tempId = Provider.of<UserProvider>(context, listen: false).tempId = decodedResponse["data"]["id"];
+      print("The temp id is $tempId");
+      print("The response is ${response.body}");
+
       if (response.statusCode == 200) {
         return true;
+      } else {
+        return false;
       }
-      return false;
     } catch (e) {
       customSnackBar(context, "Failed to create diary entry", "");
     }
@@ -228,6 +235,17 @@ class API {
       return RawPageListModel.fromJson(raw);
     }
   }
+
+  Future shareAsPost({required int id, required BuildContext context}) async {
+    final response = await http.post(
+      Uri.parse(url + '/diary-entry/$id/share-as-post'),
+      headers: authHeader,
+      body: "",
+    );
+    print("Share as post respnse is ${response.body}");
+    customSnackBar(context, "Diary Entry Shared as post", "");
+    return response;
+  }
 }
 
 customSnackBar(BuildContext context, String message, String listName) {
@@ -242,7 +260,7 @@ customSnackBar(BuildContext context, String message, String listName) {
           ),
         ],
       ),
-      duration: const Duration(seconds: 8),
+      duration: const Duration(seconds: 2),
     ),
   );
 }
