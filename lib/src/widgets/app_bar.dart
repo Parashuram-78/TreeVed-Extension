@@ -1,12 +1,15 @@
 import 'dart:html';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:treeved/providers/user_provider.dart';
+import 'package:treeved/src/screens/login_screen.dart';
 import 'package:treeved/src/widgets/EmojiConverter.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../routes/routes.dart';
+import '../screens/homepage.dart';
 import '../screens/privacy_policy_screen.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -98,9 +101,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                               );
                             } else {
                               window.localStorage.clear();
-                              context.vxNav.clearAndPush(
-                                Uri.parse(Routes.login),
-                              );
+                              Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                      builder: (context) => const LoginScreen()));
                             }
                           },
                           child: Column(

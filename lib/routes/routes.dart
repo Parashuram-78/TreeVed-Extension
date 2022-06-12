@@ -33,7 +33,6 @@ final routesDelegate = VxNavigator(
         return MaterialPage(
           child: LoginScreen(),
         );
-        ;
       }
     },
     Routes.privacy_policy: (context, params) {

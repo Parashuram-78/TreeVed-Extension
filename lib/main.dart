@@ -18,13 +18,6 @@ void main() async {
   ], child: const MyApp()));
 }
 
-check() {
-  if (window.localStorage["username"] != null) {
-    return const MyHomePage();
-  } else {
-    return const LoginScreen();
-  }
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -35,8 +28,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: MaterialApp.router(
-        routerDelegate: routesDelegate,
+      child: MaterialApp(
+        home: window.localStorage["username"] != null ? const MyHomePage(): const LoginScreen(),
         debugShowCheckedModeBanner: false,
         title: "TreeVed",
         theme: ThemeData(
@@ -48,7 +41,6 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        routeInformationParser: VxInformationParser(),
       ),
     );
   }

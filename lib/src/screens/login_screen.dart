@@ -137,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       UserDetails userDetails = await API.getUserDetails();
                       var _username = window.localStorage;
                       _username['username'] = userDetails.username!;
+
                       Provider.of<UserProvider>(context, listen: false)
                           .setUserDetails(userDetails: userDetails);
                       if (mounted) {
