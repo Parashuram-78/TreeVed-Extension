@@ -18,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    var nullify;
+
     Size size = MediaQuery.of(context).size;
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -96,18 +96,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         return PopupMenuItem(
                           onTap: () async {
                             if (index == 0) {
-                              context.vxNav.push(
-                                Uri.parse(Routes.privacy_policy),
-                                params: true,
-                              );
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicyScreen(isMainScreen: true)));
                             } else {
                               window.localStorage.remove("username");
                               window.localStorage.remove("refreshToken");
                               window.localStorage.remove("accessToken");
                               userProvider.nullifyUserDetails();
                               window.localStorage.clear();
+                              Phoenix.rebirth(context);
                              await Future.delayed(Duration(milliseconds: 1));
-                             Phoenix.rebirth(context);
+
 
                             }
                           },

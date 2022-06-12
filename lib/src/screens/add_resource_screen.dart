@@ -37,6 +37,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     Future.microtask(() async {
+      print("initState");
       UserDetails userDetails = await API.getUserDetails();
       Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
 

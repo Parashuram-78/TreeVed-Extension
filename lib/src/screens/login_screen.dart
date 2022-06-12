@@ -7,6 +7,7 @@ import 'package:treeved/models/user_model.dart';
 import 'package:treeved/providers/user_provider.dart';
 import 'package:treeved/src/screens/homepage.dart';
 import 'package:treeved/src/screens/privacy_policy_screen.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -85,6 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: TextFormField(
+                  onFieldSubmitted: (value) {
+                    FocusScope.of(context).unfocus();
+                  },
                   validator: (value) {
                     if (value == null || value!.isEmpty) {
                       return "Please enter password";
@@ -126,29 +130,49 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.blue,
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      if (mounted) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                      }
-                      await API.loginUsingUsernameAndPassword(
-                          username: usernameController.text,
-                          password: passwordController.text);
-                      UserDetails userDetails = await API.getUserDetails();
-                      var _username = window.localStorage;
-                      _username['username'] = userDetails.username!;
 
-                      Provider.of<UserProvider>(context, listen: false)
-                          .setUserDetails(userDetails: userDetails);
-                      if (mounted) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                            builder: (context) => const MyHomePage()),
-                      );
+
+                      try {
+                        if (mounted) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                        }
+                        await API.loginUsingUsernameAndPassword(
+                            username: usernameController.text,
+                            password: passwordController.text);
+                        UserDetails userDetails = await API.getUserDetails();
+                        var _username = window.localStorage;
+                        _username['username'] = userDetails.username!;
+
+                        Provider.of<UserProvider>(context, listen: false)
+                            .setUserDetails(userDetails: userDetails);
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                              builder: (context) => const MyHomePage()),
+                        );
+
+                        if (mounted) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
+
+                      } catch (e) {
+                        if (mounted) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
+                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Incorrect username or password"),
+                          ),
+                        );
+                        }
+
+
                     } else {}
                   },
                   child: isLoading
