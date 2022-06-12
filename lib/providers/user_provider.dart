@@ -9,6 +9,10 @@ class UserProvider extends ChangeNotifier {
     this.userDetails = userDetails;
     notifyListeners();
   }
+  void nullifyUserDetails() {
+    userDetails = null;
+    notifyListeners();
+  }
 
 
 

@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
 import 'package:treeved/providers/user_provider.dart';
 import 'package:treeved/src/screens/login_screen.dart';
@@ -100,10 +101,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                 params: true,
                               );
                             } else {
+                              window.localStorage.remove("username");
+                              window.localStorage.remove("refreshToken");
+                              window.localStorage.remove("accessToken");
+                              userProvider.nullifyUserDetails();
                               window.localStorage.clear();
-                              Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                      builder: (context) => const LoginScreen()));
+                             await Future.delayed(Duration(milliseconds: 1));
+                             Phoenix.rebirth(context);
+
                             }
                           },
                           child: Column(
