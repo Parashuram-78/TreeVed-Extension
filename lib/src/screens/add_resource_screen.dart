@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:treeved/controllers/api_handler.dart';
 import 'package:treeved/models/page_model.dart';
@@ -31,31 +32,36 @@ bool isPageManagement = false;
 
 bool isDiaryAdding = false;
 bool isDiaryShareAsPostAdding = false;
-
+API apiHandler = API();
+UserDetails? userDetails;
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     Future.microtask(() async {
-      print("initState");
-      UserDetails userDetails = await API.getUserDetails();
-      Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails);
 
-      posterList.add(userDetails.username!);
-      setState(() {
-        isProfileDetailsLoading = false;
-      });
-      rawMyPage = await API.getMyPages();
+      posterList.clear();
+      userDetails = await apiHandler.getUserDetails();
+      Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails!);
+      posterList.add(userDetails!.username!);
+      rawMyPage = await apiHandler.getMyPages();
       myPages = rawMyPage.results!;
-
       posterList.addAll(myPages.map((e) => e.name));
       myPages.isNotEmpty ? hasPage = true : hasPage = false;
-      setState(() {
-        isPagesLoading = false;
-      });
+      if(mounted)
+        {
+          setState(() {
+            isPagesLoading = false;
+            isProfileDetailsLoading = false;
+          });
+        }
+      print("The poster list is: ${posterList.toString()}");
     });
+
     super.initState();
   }
+
+
 
   final _formKey = GlobalKey<FormState>();
   static int tempId = 0;
@@ -318,11 +324,13 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                             setState(() {
                                               isDiaryAdding = true;
                                             });
-                                            await API.createDiaryEntry(
+                                            await apiHandler
+                                                .createDiaryEntry(
                                               context: context,
                                               resourceUrl: urlController.text,
                                               rating: sliderValue.toString(),
-                                            ).then((value) {
+                                            )
+                                                .then((value) {
                                               print("value: $value");
                                             });
                                             urlController.clear();
@@ -349,7 +357,7 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height:5 ),
+              const SizedBox(height: 5),
               isDiaryShareAsPostAdding
                   ? Container(
                       height: 20,
@@ -371,14 +379,12 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                           });
 
                           if (_formKey.currentState!.validate()) {
-                            await API
-                                .createDiaryEntry(
+                            await apiHandler.createDiaryEntry(
                               context: context,
                               resourceUrl: urlController.text,
                               rating: sliderValue.toString(),
                             );
-                            API api = API();
-                            await api.shareAsPost(context: context, id: Provider.of<UserProvider>(context, listen: false).tempId);
+                            await apiHandler.shareAsPost(context: context, id: Provider.of<UserProvider>(context, listen: false).tempId);
                             urlController.clear();
                           }
                           setState(() {

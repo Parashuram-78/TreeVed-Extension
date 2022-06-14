@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treeved/models/all_list_model.dart';
 import 'package:treeved/models/authenticated_model.dart';
 import 'package:treeved/models/user_model.dart';
@@ -17,6 +18,11 @@ import '../models/page_model.dart';
 import '../src/screens/homepage.dart';
 
 class API {
+
+  API() {
+    getAccessToken();
+  }
+
   static const String baseUrl = "api-prod.treeved.com/v1";
   static const String baseUrl2 = "api-dev.treeved.com/v1";
   static const String productionUrl = "https://$baseUrl";
@@ -33,81 +39,109 @@ class API {
   static String addRatingToResource({required String resourceId}) => '/resource/$resourceId/rating/add/';
   static String createDiary = '/diary-entry/add/';
 
-  static String username = window.localStorage["username"] ?? '';
+  String username = '';
   static String refreshToken = "";
   static String accessToken = "";
   static String tempToken = "";
 
-  static Map<String, String> authHeader = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + window.localStorage['accessToken']!,
-  };
+  Future getAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    accessToken = prefs.getString('accessToken')!;
+    username = prefs.getString('username')!;
+    print("accessToken: $accessToken");
+  }
+
+  Future<Map<String, String>> constructApiHeader() async {
+
+
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + accessToken,
+    };
+
+    return headers;
+  }
+
   Map<String, String> jsonheaders = {
     "Content-Type": "application/json",
     "Charset": "utf-8",
   };
 
-  static loginUsingUsernameAndPassword({required String username, required String password}) async {
+  static loginUsingUsernameAndPassword({required String username, required String password, required BuildContext context}) async {
     var response = await http.post(Uri.parse(url + "/auth/login/"), body: {"username": username, "password": password});
-
+    final prefs = await SharedPreferences.getInstance();
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
+
       refreshToken = jsonResponse["refresh"];
       accessToken = jsonResponse["access"];
-      window.localStorage["refreshToken"] = refreshToken;
-      window.localStorage["accessToken"] = accessToken;
+      await prefs.setString("accessToken", accessToken);
+      await prefs.setString("refreshToken", refreshToken);
+
+      print("The auth response is ${response.body}");
     } else {
       throw Exception("Failed to login");
     }
   }
 
   refreshTokens() async {
-    print("the refresh token isk ${window.localStorage["refreshToken"]}");
+    Map<String, String> headers = await constructApiHeader();
+
+    final prefs = await SharedPreferences.getInstance();
+
     var response = await http.post(Uri.parse(url + "/auth/login/refresh/"),
         body: jsonEncode({
-          "refresh": window.localStorage["refreshToken"]!,
+          "refresh": prefs.getString("refreshToken")!,
         }),
-        headers: authHeader);
+        headers: headers);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       accessToken = jsonResponse["access"];
 
-      window.localStorage["accessToken"] = accessToken;
+      prefs.setString("accessToken", accessToken);
     } else {
       throw Exception("Failed to refresh token");
     }
   }
 
-  static getUserDetails() async {
-    var response = await http.get(Uri.parse(url + userDetails), headers: authHeader);
-
-    if (response.statusCode == 200) {
-      return UserDetails.fromJson(json.decode(response.body));
+  getUserDetails() async {
+    print("failureB");
+    Map<String, String> headers = await constructApiHeader();
+    print("failure");
+    try {
+      print("the url is ${url + userDetails}");
+      var response = await http.get(Uri.parse(url + userDetails), headers: headers);
+      if (response.statusCode == 200) {
+        return UserDetails.fromJson(json.decode(response.body));
+      }
+      print("The user details are ${response.body}");
+    } catch (e) {
+      print("error :::${e.toString()}");
     }
-    return NullThrownError();
   }
 
   getUserLists({required int pageKey}) async {
-    var response = await http.get(Uri.parse(url + '/list/' + username + '/user-lists' + "?page=$pageKey"), headers: authHeader);
+    Map<String, String> headers = await constructApiHeader();
+    var response = await http.get(Uri.parse(url + '/list/' + username + '/user-lists' + "?page=$pageKey"), headers: headers);
     print("The user list url is ${url + '/list/' + username + '/user-lists' + "?page=$pageKey"}");
     print("The user list response is ${response.body}");
 
     if (response.statusCode == 200) {
-      var raw = json.decode(response.body);
-
       return RawListModel.fromJson(json.decode(response.body));
     }
   }
 
-  static createDiaryEntry({
+  createDiaryEntry({
     required BuildContext context,
     required String resourceUrl,
     required String rating,
   }) async {
+    Map<String, String> headers = await constructApiHeader();
     try {
       var response = await http.post(
         Uri.parse(url + createDiary),
-        headers: authHeader,
+        headers: headers,
         body: json.encode({
           "url": resourceUrl,
           "rating": rating,
@@ -168,12 +202,12 @@ class API {
   static Future continueWithGoogleSignIn({required String idToken, required BuildContext context}) async {
     var response;
     String data = jsonEncode({"access_token": idToken});
-
+    final prefs = await SharedPreferences.getInstance();
     try {
       response = await http
           .post(Uri.parse(url + "/auth/social/signin/google-oauth2/"), body: data, headers: {"Content-Type": "application/json", "Charset": "utf-8"});
     } catch (e) {
-      print("THE ERROR IS $e");
+      print("THE ERROR $e");
     }
     final token = ApiTokenResponse.fromJson(jsonDecode(response.body));
 
@@ -183,8 +217,8 @@ class API {
       accessToken: token.accessToken!,
       refreshToken: token.refreshToken!,
     );
-    window.localStorage["refreshToken"] = token.refreshToken!;
-    window.localStorage["accessToken"] = token.accessToken!;
+    prefs.setString("accessToken", token.accessToken!);
+    prefs.setString("refreshToken", token.refreshToken!);
     if (response != null) {
       print("THE RESPONSE IS $response");
     }
@@ -192,22 +226,24 @@ class API {
     return response;
   }
 
-  static addtoList({
+  addtoList({
     required String addedUrl,
     required BuildContext context,
     required String listId,
     required String rating,
     required String listName,
   }) async {
+    Map<String, String> headers = await constructApiHeader();
+
     try {
-      var response = await http.get(Uri.parse(url + addResource + addedUrl), headers: authHeader);
+      var response = await http.get(Uri.parse(url + addResource + addedUrl), headers: headers);
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         int id = jsonResponse["content"]["id"];
         var respo = await http.patch(
           Uri.parse(url + addResourceToList(listId: listId, resourceId: '$id')),
-          headers: authHeader,
+          headers: headers,
           body: json.encode({"rating": rating}),
         );
       }
@@ -216,19 +252,17 @@ class API {
     }
   }
 
-  static Future<RawMyPage> getMyPages() async {
-    final response = await http.get(Uri.parse(url + "/page/mypages/"), headers: authHeader);
+  Future<RawMyPage> getMyPages() async {
+    Map<String, String> headers = await constructApiHeader();
+
+    final response = await http.get(Uri.parse(url + "/page/mypages/"), headers: headers);
     print("THE RESPONSE IS PAGES ${response.body}");
     return RawMyPage.fromJson(json.decode(response.body));
   }
 
   getPageLists({required int pageId, required int pageKey}) async {
-    var response = await http.get(Uri.parse(url + '/page/$pageId/list/all/' + "?page=$pageKey"), headers: authHeader);
-
-    print("The endpoint is ${url + '/page/$pageId/list/all/' + "?page=$pageKey"}");
-
-    print("The page response is ${response.body}");
-
+    Map<String, String> headers = await constructApiHeader();
+    var response = await http.get(Uri.parse(url + '/page/$pageId/list/all/' + "?page=$pageKey"), headers: headers);
     if (response.statusCode == 200) {
       var raw = json.decode(response.body);
 
@@ -237,12 +271,13 @@ class API {
   }
 
   Future shareAsPost({required int id, required BuildContext context}) async {
+    Map<String, String> headers = await constructApiHeader();
+
     final response = await http.post(
       Uri.parse(url + '/diary-entry/$id/share-as-post'),
-      headers: authHeader,
+      headers: headers,
       body: "",
     );
-    print("Share as post respnse is ${response.body}");
     customSnackBar(context, "Diary Entry Shared as post", "");
     return response;
   }

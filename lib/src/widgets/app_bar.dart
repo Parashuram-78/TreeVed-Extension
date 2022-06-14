@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:treeved/providers/user_provider.dart';
 import 'package:treeved/src/screens/login_screen.dart';
 import 'package:treeved/src/widgets/EmojiConverter.dart';
@@ -18,7 +19,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Size size = MediaQuery.of(context).size;
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -38,8 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: ClipOval(
                         child: Image.network(
-                          user?.profilePicture ??
-                              'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+                          user?.profilePicture ?? 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
                           fit: BoxFit.cover,
                           height: 40,
                           width: 40,
@@ -50,16 +49,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user?.firstName != null
-                              ? "${user?.firstName} ${user?.lastName}"
-                              : "Loading...",
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
+                          user?.firstName != null ? "${user?.firstName} ${user?.lastName}" : "Loading...",
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          user!.username != null
-                              ? TextwithEmoji.text(value: user!.username!)
-                              : "Loading...",
+                          user!.username! != null ? TextwithEmoji.text(value: user!.username!) : "Loading...",
                           style: const TextStyle(
                             fontStyle: FontStyle.italic,
                             fontSize: 10,
@@ -67,9 +61,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                         ),
                         Text(
-                          user!.bio != null
-                              ? TextwithEmoji.text(value: user!.bio!)
-                              : "Loading...",
+                          user!.bio != null ? TextwithEmoji.text(value: user!.bio!) : "Loading...",
                           style: const TextStyle(
                             fontSize: 10,
                             color: Colors.grey,
@@ -79,7 +71,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ],
                 ),
-
                 PopupMenuButton(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -96,15 +87,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         return PopupMenuItem(
                           onTap: () async {
                             if (index == 0) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicyScreen(isMainScreen: true)));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => PrivacyPolicyScreen(isMainScreen: true)));
                             } else {
-                              window.localStorage.remove("username");
-                              window.localStorage.remove("refreshToken");
-                              window.localStorage.remove("accessToken");
+                              var prefs = await SharedPreferences.getInstance();
+                              await prefs.clear();
+
+                              await Future.delayed(Duration(milliseconds: 1));
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginScreen()),
+                                (route) => false,
+                              );
                               userProvider.nullifyUserDetails();
-                              window.localStorage.clear();
-                              Phoenix.rebirth(context);
-                             await Future.delayed(Duration(milliseconds: 1));
 
 
                             }
@@ -114,12 +108,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                               Row(
                                 children: [
                                   Icon(
-                                    index == 0
-                                        ? Icons.privacy_tip_outlined
-                                        : Icons.logout_outlined,
-                                    color: index == 0
-                                        ? Colors.black
-                                        : Colors.redAccent,
+                                    index == 0 ? Icons.privacy_tip_outlined : Icons.logout_outlined,
+                                    color: index == 0 ? Colors.black : Colors.redAccent,
                                   ),
                                   const SizedBox(width: 5),
                                   Text(

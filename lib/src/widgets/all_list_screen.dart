@@ -164,7 +164,8 @@ class _AllListScreenState extends State<AllListScreen> {
                                   isAdding = true;
                                 });
                               }
-                              await API.addtoList(
+                              API apiHandler = API();
+                              await apiHandler.addtoList(
                                 addedUrl: widget.url,
                                 context: context,
                                 listId: selectedList,

@@ -13,6 +13,7 @@ import '../src/screens/login_screen.dart';
 class Routes {
   static const String privacy_policy = '/privacy-policy';
   static const String login = '/login';
+  static const String add_respurce_screen = '/add-resource';
 }
 
 final routesDelegate = VxNavigator(
@@ -25,15 +26,10 @@ final routesDelegate = VxNavigator(
   ],
   routes: {
     "/": (context, parmas) {
-      if (window.localStorage["username"] != null) {
-        return MaterialPage(
+      return MaterialPage(
           child: MyHomePage(),
         );
-      } else {
-        return MaterialPage(
-          child: LoginScreen(),
-        );
-      }
+
     },
     Routes.privacy_policy: (context, params) {
       return MaterialPage(
@@ -45,6 +41,13 @@ final routesDelegate = VxNavigator(
     Routes.login: (context, params) {
       return MaterialPage(
         child: LoginScreen(),
+      );
+    },
+
+
+    Routes.add_respurce_screen: (context, params) {
+      return MaterialPage(
+        child: AddResourceScreen(),
       );
     },
   },
