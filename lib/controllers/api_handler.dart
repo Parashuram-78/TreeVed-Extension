@@ -48,7 +48,7 @@ class API {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     accessToken = prefs.getString('accessToken')!;
     username = prefs.getString('username')!;
-    print("accessToken: $accessToken");
+
   }
 
   Future<Map<String, String>> constructApiHeader() async {
@@ -79,7 +79,7 @@ class API {
       await prefs.setString("accessToken", accessToken);
       await prefs.setString("refreshToken", refreshToken);
 
-      print("The auth response is ${response.body}");
+
     } else {
       throw Exception("Failed to login");
     }
@@ -89,43 +89,42 @@ class API {
     Map<String, String> headers = await constructApiHeader();
 
     final prefs = await SharedPreferences.getInstance();
-
     var response = await http.post(Uri.parse(url + "/auth/login/refresh/"),
         body: jsonEncode({
           "refresh": prefs.getString("refreshToken")!,
         }),
         headers: headers);
     if (response.statusCode == 200) {
+
       var jsonResponse = json.decode(response.body);
       accessToken = jsonResponse["access"];
-
       prefs.setString("accessToken", accessToken);
     } else {
       throw Exception("Failed to refresh token");
     }
+
   }
 
   getUserDetails() async {
-    print("failureB");
+
     Map<String, String> headers = await constructApiHeader();
-    print("failure");
+
     try {
-      print("the url is ${url + userDetails}");
+
       var response = await http.get(Uri.parse(url + userDetails), headers: headers);
       if (response.statusCode == 200) {
         return UserDetails.fromJson(json.decode(response.body));
       }
-      print("The user details are ${response.body}");
+
     } catch (e) {
-      print("error :::${e.toString()}");
+
     }
   }
 
   getUserLists({required int pageKey}) async {
     Map<String, String> headers = await constructApiHeader();
     var response = await http.get(Uri.parse(url + '/list/' + username + '/user-lists' + "?page=$pageKey"), headers: headers);
-    print("The user list url is ${url + '/list/' + username + '/user-lists' + "?page=$pageKey"}");
-    print("The user list response is ${response.body}");
+
 
     if (response.statusCode == 200) {
       return RawListModel.fromJson(json.decode(response.body));
@@ -156,8 +155,7 @@ class API {
       customSnackBar(context, "Diary Entry created successfully", "");
       var decodedResponse = json.decode(response.body);
       var tempId = Provider.of<UserProvider>(context, listen: false).tempId = decodedResponse["data"]["id"];
-      print("The temp id is $tempId");
-      print("The response is ${response.body}");
+
 
       if (response.statusCode == 200) {
         return true;
@@ -184,7 +182,7 @@ class API {
         user = userCredential.user!;
         var token = await user.getIdToken();
         if (token != null) {
-          print("THE ID TOKEN IS $token");
+
           tempToken = token;
           await continueWithGoogleSignIn(idToken: token, context: context);
           customSnackBar(context, "Logged in successfully!", "");
@@ -195,7 +193,7 @@ class API {
         }
       }
     } catch (e) {
-      print("THE ERROR IS MAIN $e");
+
     }
   }
 
@@ -207,7 +205,6 @@ class API {
       response = await http
           .post(Uri.parse(url + "/auth/social/signin/google-oauth2/"), body: data, headers: {"Content-Type": "application/json", "Charset": "utf-8"});
     } catch (e) {
-      print("THE ERROR $e");
     }
     final token = ApiTokenResponse.fromJson(jsonDecode(response.body));
 
@@ -220,7 +217,6 @@ class API {
     prefs.setString("accessToken", token.accessToken!);
     prefs.setString("refreshToken", token.refreshToken!);
     if (response != null) {
-      print("THE RESPONSE IS $response");
     }
 
     return response;
@@ -256,7 +252,6 @@ class API {
     Map<String, String> headers = await constructApiHeader();
 
     final response = await http.get(Uri.parse(url + "/page/mypages/"), headers: headers);
-    print("THE RESPONSE IS PAGES ${response.body}");
     return RawMyPage.fromJson(json.decode(response.body));
   }
 
