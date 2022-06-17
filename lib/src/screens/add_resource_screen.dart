@@ -1,3 +1,6 @@
+
+import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -6,7 +9,9 @@ import 'package:treeved/controllers/api_handler.dart';
 import 'package:treeved/models/page_model.dart';
 import 'package:treeved/models/user_model.dart';
 import 'package:treeved/providers/user_provider.dart';
+import 'package:treeved/src/screens/login_screen.dart';
 import 'package:treeved/src/widgets/all_list_screen.dart';
+import 'dart:js' as js;
 
 import '../widgets/app_bar.dart';
 
@@ -34,12 +39,15 @@ bool isDiaryAdding = false;
 bool isDiaryShareAsPostAdding = false;
 API apiHandler = API();
 UserDetails? userDetails;
+String? tempUrl;
 
 class _AddResourceScreenState extends State<AddResourceScreen> {
   @override
   void initState() {
     Future.microtask(() async {
 
+      await js.context.callMethod('getCurrentTab', [tempUrl]);
+      print("the temp url is: ${tempUrl}");
       posterList.clear();
       userDetails = await apiHandler.getUserDetails();
       Provider.of<UserProvider>(context, listen: false).setUserDetails(userDetails: userDetails!);
@@ -55,7 +63,6 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
             isProfileDetailsLoading = false;
           });
         }
-      print("The poster list is: ${posterList.toString()}");
     });
 
     super.initState();
@@ -317,6 +324,8 @@ class _AddResourceScreenState extends State<AddResourceScreen> {
                                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(10.0), side: BorderSide(color: Colors.red)))),
                                       onPressed: () async {
+                                        var currentURl = await js.context.callMethod("getCurrentTab");
+
                                         if (isDiaryShareAsPostAdding) {
                                           debugPrint("isDiaryShareAsPostAdding");
                                         } else {
